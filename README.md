@@ -1,4 +1,11 @@
-## Hi there 👋
+# Merhaba, Ben Elif! 👋
+
+Yazılım dünyasına ilk adımımı bugün (7 Eylül 2026) attım! 🚀
+
+- 💻 Şu anda **Git ve GitHub** kullanmayı öğreniyorum.
+- 📱 Geliştirme süreçlerimi **Android tabletim** üzerinden yürütüyorum.
+- 🎯 Hedefim: Adım adım harika projeler üretmek ve kodlamada uzmanlaşmak!
+
 
 <!--
 **codebyelif/codebyelif** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
