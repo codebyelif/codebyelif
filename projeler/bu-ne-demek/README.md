@@ -15,14 +15,18 @@ Bütün belgeler son tarihleriyle birlikte “Belgelerim” listesinde durur. En
 
 ## Nasıl denenir?
 
+**claude.ai’de (en kolayı):** Artifact linkini aç. Uygulama senin Claude hesabınla çalışır, API anahtarı gerekmez; ilk kullanımda izin sorar. Fotoğraf ve metin gönderilebilir.
+
+**Başka bir yerde (GitHub Pages ya da dosya):**
 1. `index.html` dosyasını tarayıcıda aç.
 2. Anahtarsız görmek için **Örnek belgeyle dene**’ye bas.
-3. Kendi belgen için [Google AI Studio](https://aistudio.google.com/apikey)’dan ücretsiz bir Gemini API anahtarı al ve ⚙ Ayarlar’a yapıştır.
+3. Kendi belgen için [Claude Console](https://platform.claude.com)’dan bir API anahtarı al ve ⚙ Ayarlar’a yapıştır. Bir belge yaklaşık 5–15 sent tutar. Bu yolda PDF de gönderilebilir.
 
 ## Teknik
 
-- Tek HTML dosyası, kütüphane yok, sunucu yok
-- Google Gemini API (görsel + PDF okuma, JSON şeması ile yapılandırılmış çıktı)
+- Tek HTML dosyası, sunucu yok
+- Claude: claude.ai içinde kullanıcının kendi hesabıyla, başka yerde resmî Anthropic JavaScript kütüphanesiyle (`@anthropic-ai/sdk`) ve kullanıcının API anahtarıyla
+- Görsel ve PDF okuma, JSON şeması ile yapılandırılmış çıktı
 - Veriler yalnızca tarayıcıda (`localStorage`); fotoğraflar saklanmaz
 - Ankommen ile aynı görsel dil; açık ve koyu tema
 
@@ -30,7 +34,7 @@ Bütün belgeler son tarihleriyle birlikte “Belgelerim” listesinde durur. En
 
 ## Durum
 
-- Prototip 1 – Kasım 2026
+- Prototip 1.1 – Kasım 2026 (Gemini’den Claude’a geçildi)
 - Sıradaki adım: 10 kişiyle gerçek belgeler üzerinde test
 
 ⚠️ Yapay zekâ hata yapabilir. Tarih ve tutarları her zaman asıl yazıdan kontrol et. Hukuki danışmanlık değildir.

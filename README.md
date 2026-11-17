@@ -15,7 +15,7 @@ Türkiye’den Almanya’ya öğrenim ya da iş için taşınanlara, resmî işl
 🔗 [Canlı prototip](https://share.gemini.google/FAJgxzcCEMkf) · 📐 [Tasarım dokümanı](projeler/ankommen/tasarim.md)
 
 ### [Bu ne demek?](projeler/bu-ne-demek/)
-Resmî yazının fotoğrafını çek; ne dediğini, ne yapman gerektiğini ve son tarihi sade dille öğren. Her dilden belge, 10 açıklama dili, son tarih takibi ve yazının dilinde cevap mektubu taslağı. Gemini ile çalışır.
+Resmî yazının fotoğrafını çek; ne dediğini, ne yapman gerektiğini ve son tarihi sade dille öğren. Her dilden belge, 10 açıklama dili, son tarih takibi ve yazının dilinde cevap mektubu taslağı. Claude ile çalışır; claude.ai’de anahtarsız açılır.
 
 📐 [Tasarım dokümanı](projeler/bu-ne-demek/tasarim.md)
 
