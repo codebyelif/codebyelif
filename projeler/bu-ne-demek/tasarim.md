@@ -1,6 +1,6 @@
 # Bu ne demek? – Tasarım Dokümanı
 
-Sürüm: prototip 1.1 · 17 Kasım 2026 · Çalışma adı
+Sürüm: prototip 1.2 · 17 Kasım 2026 · Çalışma adı
 
 ## 1. Ürün
 
@@ -36,20 +36,22 @@ Sürüm: prototip 1.1 · 17 Kasım 2026 · Çalışma adı
 ## 4. Akış
 
 ```
-Ana ekran ──► Fotoğraf çek / Dosya seç / Metin yapıştır ──► Açıklama dili ──► Açıkla
+Ana ekran ──► Fotoğraf çek / Dosya seç (PDF dahil) / Metin yapıştır ──► (sayfaya dokun: karart) ──► Açıkla
    ▲                                                                          │
    │                                                                     Okuyor… (Durdur)
    │                                                                          │
    └──── ← Belgelerim ◄──── Sonuç ekranı ◄─────────────────────────────────────┘
-                              ├─ Takvime ekle / .ics
+                              ├─ Takvime ekle / 3 gün önce hatırlat / .ics
+                              ├─ Tarih ve tutarı düzenle, son tarih ekle
                               ├─ Yapılacakları işaretle
+                              ├─ Bu açıklama doğru mu? (test notu)
                               ├─ Cevap yaz (taslak + çeviri)
-                              └─ Halledildi / Sil
+                              └─ Halledildi / Özeti paylaş / Sil
 ```
 
 **Ana ekran:** sıradaki son tarih panosu (varsa) → yeni belge kartı → belgelerim listesi (en yakın son tarih üstte, halledilenler en altta).
 
-**Sonuç ekranı sırası:** aciliyet panosu → başlık ve künye (tür, gönderen, dosya no, tarih, dil) → Kısaca → Son tarihler → Yapman gerekenler → Tutarlar → Hiçbir şey yapmazsan → Yazıdaki terimler → Emin olamadığım yerler → Cevap yaz → Halledildi / Sil.
+**Sonuç ekranı sırası:** aciliyet panosu → başlık ve künye (tür, gönderen, dosya no, tarih, dil) → Kısaca → Son tarihler → Yapman gerekenler → Tutarlar → Hiçbir şey yapmazsan → Yazıdaki terimler → Emin olamadığım yerler → Bu açıklama doğru mu? → Cevap yaz → Halledildi / Özeti paylaş / Sil.
 
 ## 5. Görsel dil
 
@@ -61,6 +63,9 @@ Ankommen ile aynı renk değişkenleri, yazı tipleri (Barlow Condensed + Barlow
 | Yakında / Bilgi pano | Yumuşak gri zemin |
 | Son tarih rozeti | 10 günden fazla: nötr · 10 gün ve altı: sarı · geçti: kırmızı |
 | “tahmini” etiketi | Kesikli çerçeveli küçük hap |
+| “sen düzelttin” etiketi | Yeşil düz çerçeveli küçük hap |
+| Karartılmış sayfa | Küçük resmin üstünde siyah “Karartıldı” şeridi |
+| Karartma aracı | Tam ekran; sayfa ortada, altta Geri al / Vazgeç / Bitti |
 | Hiçbir şey yapmazsan | Solda kırmızı çizgili kutu |
 | Terimler | Yumuşak zeminli iki sütunlu liste (dar ekranda alt alta) |
 | Cevap taslağı | Solda sarı çizgili kutu, altında Kopyala ve açılır çeviri |
@@ -71,8 +76,8 @@ Ankommen ile aynı renk değişkenleri, yazı tipleri (Barlow Condensed + Barlow
 
 | Nerede açıldı | Nasıl çalışır | Ne gerekir |
 |---|---|---|
-| claude.ai içinde (Artifact) | Sayfayı açan kişinin kendi Claude hesabı (`sample` yeteneği, varsayılan model katmanı) | Hiçbir şey; ilk kullanımda izin sorulur. Yalnızca fotoğraf ve metin, PDF yok |
-| Başka her yerde (GitHub Pages, dosya) | Resmî Anthropic JavaScript kütüphanesi (`@anthropic-ai/sdk@1.4.0`, jsDelivr’den), kullanıcının kendi API anahtarıyla | Claude Console’dan API anahtarı. Fotoğraf, PDF ve metin |
+| claude.ai içinde (Artifact) | Sayfayı açan kişinin kendi Claude hesabı (`sample` yeteneği, varsayılan model katmanı) | Hiçbir şey; ilk kullanımda izin sorulur |
+| Başka her yerde (GitHub Pages, dosya) | Resmî Anthropic JavaScript kütüphanesi (`@anthropic-ai/sdk@1.4.0`, jsDelivr’den), kullanıcının kendi API anahtarıyla | Claude Console’dan API anahtarı |
 
 **Neden Claude:** Resmî yazılar hassas (kimlik no, borç, sağlık). Anthropic, API’ye gönderilen içeriği varsayılan olarak model eğitiminde kullanmaz. Ayrıca claude.ai içinde anahtarsız çalışabildiği için test etmek çok kolay: link açılır, kullanılır.
 
@@ -83,7 +88,12 @@ Ankommen ile aynı renk değişkenleri, yazı tipleri (Barlow Condensed + Barlow
 - Destekleyen modellerde sunucu tarafı yedek model (`fallbacks: "default"`): Claude bir isteği güvenlik nedeniyle reddederse istek aynı çağrı içinde uygun bir modelle tekrar denenir.
 - Hatalar kütüphanenin hata sınıflarıyla ayrılır (anahtar, model, kota, bağlantı, kredi) ve her biri çözüm söyleyen Türkçe bir mesaja çevrilir.
 
-**Çağrı 1 – Açıklama:** Sayfalar (`image` / `document` blokları) + yapıştırılan metin, sistem talimatı ve JSON şeması ile gönderilir. Claude hesabı yolunda aynı talimat ve şemanın düz metin hali tek bir istemde gider. Bugünün tarihi talimata eklenir; böylece “14 gün içinde” gibi göreli süreler gerçek tarihe çevrilir.
+**Sayfaları hazırlama (iki yolda da aynı):**
+- **PDF:** Tarayıcıda pdf.js (3.11.174, cdnjs) ile her sayfa görsele çevrilir, metin katmanı da ayrıca alınır. En çok 10 sayfa. `isEvalSupported: false` ile açılır; kötü niyetli PDF yazı tiplerinin kod çalıştırması engellenir. İşçi betiği sayfaya yüklendiği için pdf.js ayrı Worker açmadan çalışır (claude.ai’nin güvenlik kuralları Worker’a izin vermez).
+- **Dik sayfaları ikiye bölme:** claude.ai her görseli yaklaşık 1,2 megapiksele küçültür; A4 bir sayfada küçük yazı bulanıklaşır. Bu yüzden boyu eninin 1,25 katından uzun her sayfa, %8 üst üste binen üst ve alt yarı olarak gönderilir. Görsel sayısı sınırı aşılacaksa bölme yapılmaz.
+- **Karartma:** Kullanıcı sayfaya dokunup üzerine kutu çizer; kutular görsele kalıcı olarak işlenir. Karartılan sayfanın PDF metin katmanı gönderilmez, çünkü gizlenen bilgi orada da olabilir.
+
+**Çağrı 1 – Açıklama:** Sayfa görselleri (her biri “Page 1, top half” gibi bir etiketle) + PDF metin katmanları + yapıştırılan metin, sistem talimatı ve JSON şeması ile gönderilir. Claude hesabı yolunda aynı talimat ve şemanın düz metin hali tek bir istemde gider. Bugünün tarihi talimata eklenir; böylece “14 gün içinde” gibi göreli süreler gerçek tarihe çevrilir.
 
 ```js
 {
@@ -120,11 +130,14 @@ Hepsi tarayıcıda, `localStorage` içinde:
   done: false,              // Halledildi
   checked: [true, false],   // yapılacaklar
   result: { …çağrı 1… },
-  reply: { goal, letter, translation, how_to_send }   // varsa
+  reply: { goal, letter, translation, how_to_send },  // varsa
+  feedback: { verdict: "ok" | "wrong", note }           // test notu
 }
 ```
 
-Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar: `bnd.key`, `bnd.model`, `bnd.lang`.
+Kullanıcı bir tarihi ya da tutarı düzeltince o kayıt `edited: true` olur ve “sen düzelttin” etiketiyle gösterilir. Test notları raporunda kaç düzeltme yapıldığı da sayılır.
+
+Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar: `bnd.claudeKey`, `bnd.claudeModel`, `bnd.lang`.
 
 ## 8. Durumlar
 
@@ -133,11 +146,14 @@ Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar
 | Hiç belge yok | Liste yerine kısa açıklama, “Örnek belgeyle dene” linki |
 | Anahtar yok (claude.ai dışında) | “Açıkla”ya basınca ayarlar açılır, üstte neden açıldığı yazar |
 | claude.ai içinde izin verilmedi | Çözüm söyleyen not: sayfayı yeniden açıp izni onayla |
-| claude.ai içinde PDF | Eklenmez; ekran görüntüsü ya da metin istenir |
-| Okunuyor | Dönen halka, “Genelde 10–30 saniye sürer”, Durdur |
+| PDF açılıyor | “PDF hazırlanıyor: sayfa 2 / 5”; şifreli ya da bozuk PDF için açıklayıcı not |
+| 10 sayfadan uzun PDF | İlk 10 sayfa eklenir, not gösterilir |
+| Okunuyor | Dönen halka, “Genelde 20–60 saniye sürer”, Durdur |
 | Anahtar hatalı / model yok / kota / bağlantı | Yeni belge kartının altında Türkçe, çözüm söyleyen not; gerekirse “Ayarları aç” |
 | Belge okunamadı | Model bunu “Kısaca” ve “Emin olamadığım yerler”de söyler, listeler boş kalır |
 | Halledildi | Pano “Halledildi” der, rozetler kaybolur, listede üstü çizili ve en altta |
+| Yazıda son tarih yok | “Yazıda son tarih bulunamadı. Varsa kendin ekleyebilirsin.” + “Son tarih ekle” |
+| Pano izni yok (paylaş/kopyala) | Metin seçili bir kutuda gösterilir, kullanıcı kendisi kopyalar |
 
 ## 9. Gizlilik ve hukuk
 
@@ -148,7 +164,14 @@ Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar
 
 ## 10. Yol haritası
 
-**Prototip 1.1 (bu sürüm):** Claude ile çalışır (claude.ai içinde anahtarsız, başka yerde API anahtarıyla); fotoğraf/PDF/metin, 10 açıklama dili, son tarih takibi, takvim, yapılacaklar, cevap taslağı, örnek belge.
+**Prototip 1.2 (bu sürüm):** Claude ile çalışır (claude.ai içinde anahtarsız, başka yerde API anahtarıyla); fotoğraf/PDF/metin, 10 açıklama dili, son tarih takibi, takvim, yapılacaklar, cevap taslağı, örnek belge. 1.2 ile gelenler:
+- Dik sayfaları ikiye bölerek gönderme (küçük yazı için iki kat ayrıntı)
+- Tarih ve tutarı elle düzeltme, eksik son tarihi ekleme
+- “Bu açıklama doğru mu?” notu ve Ayarlar’dan kopyalanan test raporu ([test planı](test-plani.md))
+- Sayfadaki kişisel bilgileri karartma aracı
+- Her yerde PDF (claude.ai dahil)
+- “3 gün önce hatırlat” takvim kaydı; .ics dosyasında 3 gün ve 1 gün önce iki uyarı
+- “Özeti paylaş”: bir yakına gönderilecek sade özet (dosya numarası eklenmez); claude.ai dışında “Uygulamayı paylaş”
 
 **Doğrulama (kod yazmadan önce yapılacak):**
 - 10 kişiye kendi gerçek yazılarıyla denet. Ölç: açıklama doğru muydu, son tarihi doğru buldu mu, tekrar kullanır mı?
@@ -158,7 +181,7 @@ Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar
 - Kendi küçük sunucumuz (Cloudflare Worker ya da Supabase Edge Function); claude.ai dışında da kullanıcı anahtar girmeden kullanır
 - claude.ai sürümünde belge listesini tarayıcı yerine kişiye özel, sunucuda saklanan veriye taşımak (cihaz değişince kaybolmasın)
 - PWA: ana ekrana ekleme, Android paylaş menüsünden belge gönderme
-- Gerçek bildirim (son tarihten 3 gün ve 1 gün önce)
+- Gerçek bildirim (son tarihten 3 gün ve 1 gün önce); şimdilik hatırlatma takvim üzerinden
 - İngilizce arayüz (açıklama dili zaten 10 dil)
 
 **Sonra:**
@@ -170,8 +193,9 @@ Fotoğraflar saklanmaz (hem gizlilik hem depolama sınırı yüzünden). Ayarlar
 ## 11. Bilinen eksikler
 
 - Çok sayfalı yazılarda sayfalar tek tek ekleniyor; belge tarayıcı (kenar algılama) yok.
-- Takvim yalnızca link ve .ics dosyası; uygulama içi bildirim yok.
+- Hatırlatma takvim kaydına dayanıyor; kullanıcı “Takvime ekle”ye basmazsa uyarı gelmez. Gerçek bildirim için sunucu gerekiyor.
 - Arayüz yalnızca Türkçe.
 - Belge listesi yalnızca o tarayıcıda duruyor; tarayıcı verisi silinirse liste de gider.
-- claude.ai içinde PDF gönderilemiyor ve .ics takvim dosyası indirilemiyor (Google Takvim linki çalışır).
+- claude.ai içinde .ics takvim dosyası indirilemiyor ve paylaşma menüsü açılamıyor; Google Takvim linki ve kopyalama çalışır.
+- PDF en çok 10 sayfa; taranmış (fotoğraf) PDF’lerde metin katmanı olmadığı için yalnızca görsel gönderilir.
 - Yapay zekâ çıktısı gerçek belgelerle sistematik olarak test edilmedi.
