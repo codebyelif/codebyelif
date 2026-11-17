@@ -7,6 +7,13 @@ Yazılım dünyasına ilk adımımı bugün (7 Eylül 2026) attım! 🚀
 - 🎯 Hedefim: Adım adım harika projeler üretmek ve kodlamada uzmanlaşmak!
 
 
+## 🛠️ Projeler
+
+### [Ankommen](projeler/ankommen/)
+Türkiye’den Almanya’ya öğrenim ya da iş için taşınanlara, resmî işlerini kendi tarihlerine göre sıralayan kişisel rehber. Dört gidiş yolu, 16 şehir, belge çantası, bütçe ve Gemini ile çalışan motivasyon mektubu yazıcı.
+
+🔗 [Canlı prototip](https://share.gemini.google/FAJgxzcCEMkf) · 📐 [Tasarım dokümanı](projeler/ankommen/tasarim.md)
+
 <!--
 **codebyelif/codebyelif** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 
